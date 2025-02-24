@@ -6,6 +6,8 @@ import {
   Stack,
   Grid2,
   Pagination,
+  Box,
+  CircularProgress
 } from "@mui/material";
 import { motion } from "framer-motion";
 import AnimatedDots from "./AnimatedDots";
@@ -93,16 +95,22 @@ console.log(news.length)
           <Button variant="contained" onClick={handleShowNews}> اخر أخبار سوريا</Button>
           <Button variant="contained" >تواصل معنا</Button>
         </Stack>
+        {isLoading && (
+       <Box sx={{ display: 'flex' }}>
+       <CircularProgress color="primary"/>
+     </Box>
+      )}
       </Container>
       {news.length>0 &&
-      <Container m={3}>
+      <Container  >
       <Grid2
         container
         spacing={2}
-        justify="center"
+        justifyContent="center"
         alignItems="center"
         m={5}
         maxWidth="lg"
+       
       >
         {paginatedNews.map((item, index) => {
           return (
@@ -118,25 +126,8 @@ console.log(news.length)
         count={Math.ceil(news.length / itemsPerPage)}
         page={page}
         onChange={(event, value) => setPage(value)}
-        style={{
-          marginTop: "20px",
-          display: "flex",
-          justifyContent: "center",
-          position: "sticky",
-          bottom: "0",
-          backgroundColor: "#fff",
-          zIndex:"100",
-          padding: "10px",
-        }}
       />
     </Container>}
-    {/* Show loading indicator while fetching data */}
-    {isLoading && (
-        <Typography variant="h6" align="center" sx={{ mt: 3 }}>
-          جاري تحميل الأخبار...
-        </Typography>
-      )}
-      
     </>
   );
 };

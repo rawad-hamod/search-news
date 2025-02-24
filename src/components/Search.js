@@ -1,5 +1,6 @@
 import React,{useState} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
+import { motion } from "framer-motion";
 import * as Yup from 'yup';
 import {
   TextField,
@@ -40,6 +41,7 @@ const initialValues = {
 
 const Search = () => {
   const [results, setResults]=useState([]);
+  const [status, setStatus]=useState("");
   const [page, setPage] = useState(1);
   const [isLoading,setIsLoading]= useState(false);
   const itemsPerPage = 9;
@@ -61,12 +63,14 @@ const Search = () => {
       .then((data) => data.json())
       .then((data) => {
         setResults(data.articles); 
+        setStatus(data.status)
         setIsLoading(false);
         console.log(values) 
       })
       .catch((err) => {
         console.log(err);
         setIsLoading(false); 
+        setStatus("error")
       });
   };
 
@@ -162,17 +166,24 @@ const Search = () => {
       )}
 
     </Container>
-    {results.length>0 &&
+    {status==="ok" &&
       <Container m={3}>
+         <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+        
         <Alert severity="info" >
-          { `عدد النتائج${results.length}`}
+          {results.length>0 ? `عدد النتائج  ${results.length}`:"لا يوجد نتائج تطابق البحث تأكد من الكلمة المفتاحية وحاول تغيير تاريخ البحث"}
         </Alert>
+        </motion.div>
         
 
       <Grid2
         container
         spacing={2}
-        justify="center"
+        justifyContent="center"
         alignItems="center"
         m={5}
         maxWidth="lg"
@@ -187,23 +198,29 @@ const Search = () => {
       </Grid2>
       {results.length>9 && 
       <Pagination
+       size="large"
+      color="primary"
+      p={1}
       count={Math.ceil(results.length / itemsPerPage)}
       page={page}
       onChange={(event, value) => setPage(value)}
-      style={{
-        marginTop: "20px",
-        display: "flex",
-        justifyContent: "center",
-        position: "sticky",
-        bottom: "0",
-        backgroundColor: "#fff",
-        zIndex:"100"
-      }}
     />}
       
     </Container>}
     {/* Show loading indicator while fetching data */}
-    
+    {status==="error"&&
+    <Container m={3}>
+      <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 1, delay: 0.3 }}
+              >
+      <Alert severity="error">
+يوجد خطأ في الاتصال بالخادم يرجى المحاولة مرة أخرى
+      </Alert>
+      </motion.div>
+    </Container>
+    }
     </>
   );
 };

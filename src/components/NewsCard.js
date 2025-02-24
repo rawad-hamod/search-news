@@ -27,9 +27,10 @@ const NewsCard = ({ data, index, width }) => {
         position: "relative",
         height: "350px",
         width: "300px",
-        margin: "1rem",
+        margin: "1rem auto",
         textAlign: "right",
         transition: "0.3s fade",
+        
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

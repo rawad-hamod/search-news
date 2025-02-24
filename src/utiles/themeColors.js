@@ -37,7 +37,7 @@ export const themeColors = {
       styleOverrides: {
         root: {
           padding: "1rem",
-          paddingTop:0,
+          paddingTop: 0,
           borderRight: "1px solid blue",
           borderBottom: `0.1rem solid red`,
           borderLeft: `0.1rem solid purple`,
@@ -51,17 +51,28 @@ export const themeColors = {
           left: 0,
           zIndex: 2,
         },
-       
-          }
+      },
+    },
+    MuiAlert: {
+      styleOverrides: {
+        root: {
+          justifyContent: "center",
+          margin: "2rem",
+          fontSize: "1.5rem",
         },
-        MuiAlert:{
-          styleOverrides:{
-            root:{
-              justifyContent:"center",
-              margin:"2rem",
-              fontSize:"1.5rem"
-            }
-
+      },
+    },
+    MuiPagination: {
+      styleOverrides: {
+        root: {
+          marginTop: "20px",
+          display: "flex",
+          justifyContent: "center",
+          position: "sticky",
+          bottom: "0",
+          backgroundColor: "#fff",
+          zIndex: "100",
+        },
       },
     },
   },
