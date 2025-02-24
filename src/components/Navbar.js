@@ -1,4 +1,4 @@
-import { Container, Stack, Typography} from "@mui/material";
+import { Container, Stack, Typography,Box, Tooltip} from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import { navBarElemets } from "../utiles/constants";
@@ -9,6 +9,7 @@ const Navbar = () => {
       sx={{
         position: "sticky",
         top: 0,
+        gap:"2rem",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -21,12 +22,15 @@ const Navbar = () => {
       <Stack  direction="row-reverse" spacing={{ sx: 2, sm: 4 }} sx={{height:"fitContent"}}>
         {navBarElemets.map((ele, index) => (
           <div key={index}>
+            <Tooltip title={ele.text}>
             <Link to={ele.link} style={{ textDecoration: "none" }}>
               <Typography
               mt={1}
                 pr={2}
                 pl={2}
                 sx={{
+                  display:"flex",
+                  flexDirection:"row",
                   transition: "0.3s",
                   color: ele.color,
                   fontWeight:"bold",
@@ -36,10 +40,11 @@ const Navbar = () => {
                   "&:hover": { backgroundColor: ele.background },
                 }}
               >
-                {ele.text}
+                <Box sx={{display:{xs:"none",sm:"block"}}}>{ele.text}</Box><Box sx={{display:{xs:"block",sm:"none"}}}>{ele.icon}</Box>
               </Typography>
               
             </Link>
+            </Tooltip>
            
           </div>
         ))}

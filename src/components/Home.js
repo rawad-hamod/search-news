@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React,{ useState } from "react";
 import {
   Button,
   Typography,
@@ -16,22 +16,33 @@ const Home = () => {
   const theme = useTheme();
   const [news, setNews] = useState([]);
   const [page, setPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const itemsPerPage = 9;
   const startIndex = (page - 1) * itemsPerPage;
   const paginatedNews = news.slice(startIndex, startIndex + itemsPerPage);
-
+console.log(news.length)
   const fetchApi = () => {
+    setIsLoading(true); // Set loading state to true
     fetch(
-      "https://newsapi.org/v2/everything?q=غزة&language=ar&apiKey=e29c9dac114441be9cd5fd9f84b3f63f"
+      "https://newsapi.org/v2/everything?q=سوريا&language=ar&pageSize=99&apiKey=e29c9dac114441be9cd5fd9f84b3f63f"
     )
       .then((data) => data.json())
-      .then((data) => setNews(data.articles))
-      .catch((err) => console.log(err));
+      .then((data) => {
+        setNews(data.articles); 
+        setIsLoading(false); 
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false); 
+      });
   };
-  useEffect(() => {
-    fetchApi();
-  }, []);
 
+  // Handle button click to fetch news
+  const handleShowNews = () => {
+    fetchApi(); // Fetch news data when the button is clicked
+  };
+  
   return (
     <>
       <Container
@@ -79,41 +90,53 @@ const Home = () => {
           الاقتصاد، الرياضة، التكنولوجيا، والثقافة.
         </Typography>
         <Stack direction="row" spacing={2}>
-          <Button variant="contained">اخر الأخبار</Button>
-          <Button variant="contained">تواصل معنا</Button>
+          <Button variant="contained" onClick={handleShowNews}> اخر أخبار سوريا</Button>
+          <Button variant="contained" >تواصل معنا</Button>
         </Stack>
       </Container>
+      {news.length>0 &&
       <Container m={3}>
-        <Grid2
-          container
-          spacing={2}
-          justify="center"
-          alignItems="center"
-          m={5}
-          maxWidth="lg"
-        >
-          {paginatedNews.map((item, index) => {
-            return (
-              <Grid2 key={index} size={{ xs: 12, md: 6, lg: 4, xl: 3 }}>
-                <NewsCard data={item} index={index} />
-              </Grid2>
-            );
-          })}
-        </Grid2>
-        <Pagination
-          count={Math.ceil(news.length / itemsPerPage)}
-          page={page}
-          onChange={(event, value) => setPage(value)}
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            justifyContent: "center",
-            position: "fixed",
-            bottom: 0,
-            backgroundColor: "#fff",
-          }}
-        />
-      </Container>
+      <Grid2
+        container
+        spacing={2}
+        justify="center"
+        alignItems="center"
+        m={5}
+        maxWidth="lg"
+      >
+        {paginatedNews.map((item, index) => {
+          return (
+            <Grid2 key={index}  xs={12} md={6} lg={index===0?6:3}>
+              <NewsCard data={item} index={index} />
+            </Grid2>
+          );
+        })}
+      </Grid2>
+      <Pagination
+      size="large"
+      color="primary"
+        count={Math.ceil(news.length / itemsPerPage)}
+        page={page}
+        onChange={(event, value) => setPage(value)}
+        style={{
+          marginTop: "20px",
+          display: "flex",
+          justifyContent: "center",
+          position: "sticky",
+          bottom: "0",
+          backgroundColor: "#fff",
+          zIndex:"100",
+          padding: "10px",
+        }}
+      />
+    </Container>}
+    {/* Show loading indicator while fetching data */}
+    {isLoading && (
+        <Typography variant="h6" align="center" sx={{ mt: 3 }}>
+          جاري تحميل الأخبار...
+        </Typography>
+      )}
+      
     </>
   );
 };

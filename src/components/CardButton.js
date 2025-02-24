@@ -10,7 +10,9 @@ const CardButton = ({ text, background, color, onClick }) => {
         backgroundColor: background,
         borderRadius: "3rem",
         transition: "0.5s",
-        padding: "0.2rem",
+        padding: "0.5rem",
+        fontSize:"0.8rem",
+        textTransform:"lowercase",
         "&:hover": {
           backgroundColor: color,
           color: "#fff",
