@@ -56,9 +56,13 @@ export const themeColors = {
     MuiAlert: {
       styleOverrides: {
         root: {
+          display:"flex",
+         
           justifyContent: "center",
+          alignItems:"center",
           margin: "2rem",
           fontSize: "1.5rem",
+          gap:"1rem"
         },
       },
     },
@@ -75,5 +79,6 @@ export const themeColors = {
         },
       },
     },
+   
   },
 };

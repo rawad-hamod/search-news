@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React,{ useState , useRef} from "react";
 import {
   Button,
   Typography,
@@ -14,12 +14,14 @@ import AnimatedDots from "./AnimatedDots";
 import { useTheme } from "@mui/material/styles";
 import logo from "../utiles/images/search-news-logo.png";
 import NewsCard from "./NewsCard";
+import { Link } from "react-router-dom";
+import { EnterAnimation } from "../utiles/constants";
 const Home = () => {
   const theme = useTheme();
   const [news, setNews] = useState([]);
   const [page, setPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  
+  const newsSectionRef = useRef(null);
   const itemsPerPage = 9;
   const startIndex = (page - 1) * itemsPerPage;
   const paginatedNews = news.slice(startIndex, startIndex + itemsPerPage);
@@ -33,9 +35,11 @@ console.log(news.length)
       .then((data) => {
         setNews(data.articles); 
         setIsLoading(false); 
+        if (newsSectionRef.current) {
+          newsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
       })
       .catch((err) => {
-        console.log(err);
         setIsLoading(false); 
       });
   };
@@ -47,6 +51,7 @@ console.log(news.length)
   
   return (
     <>
+
       <Container
         justify="center"
         maxWidth="md"
@@ -80,6 +85,7 @@ console.log(news.length)
             اكتشف العالم من حولك مع أحدث الأخبار العاجلة والشاملة
           </Typography>
         </motion.div>
+        <EnterAnimation duration={0.4}>
         <Typography
           variant="h5"
           sx={{
@@ -91,18 +97,26 @@ console.log(news.length)
           نقدم لك آخر الأخبار المحلية والعالمية في جميع المجالات: السياسة،
           الاقتصاد، الرياضة، التكنولوجيا، والثقافة.
         </Typography>
+        </EnterAnimation>
         <Stack direction="row" spacing={2}>
-          <Button variant="contained" onClick={handleShowNews}> اخر أخبار سوريا</Button>
-          <Button variant="contained" >تواصل معنا</Button>
+          <Button variant="contained" onClick={handleShowNews} ref={newsSectionRef}> اخر أخبار سوريا</Button>
+          <Button variant="contained" 
+      >
+          <Link to="/breaking-news">اشترك بخدمة الخبر العاجل</Link>
+          </Button> 
+          
+       
         </Stack>
         {isLoading && (
-       <Box sx={{ display: 'flex' }}>
-       <CircularProgress color="primary"/>
-     </Box>
-      )}
+          
+          <Box sx={{ display:'flex',margin:"3rem"}} >
+          <CircularProgress color="primary" size={50}/>
+        </Box>
+         )}
       </Container>
+      
       {news.length>0 &&
-      <Container  >
+      <Container sx={{marginTop:"5rem"}}>
       <Grid2
         container
         spacing={2}
@@ -115,7 +129,9 @@ console.log(news.length)
         {paginatedNews.map((item, index) => {
           return (
             <Grid2 key={index}  xs={12} md={6} lg={index===0?6:3}>
+            <EnterAnimation duration={0.4}>
               <NewsCard data={item} index={index} />
+              </EnterAnimation>
             </Grid2>
           );
         })}
@@ -125,7 +141,13 @@ console.log(news.length)
       color="primary"
         count={Math.ceil(news.length / itemsPerPage)}
         page={page}
-        onChange={(event, value) => setPage(value)}
+        onChange={(event, value) => {
+          setPage(value);
+          if (newsSectionRef.current) {
+            newsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+          }
+        }}
+
       />
     </Container>}
     </>

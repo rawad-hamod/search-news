@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 a{
     all: unset;
@@ -10,4 +11,5 @@ a{
 .error{
     color:red;
     text-align:center;
+    margin:"0"
 }

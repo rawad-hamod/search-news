@@ -1,9 +1,10 @@
 import { Button } from "@mui/material";
 import React from "react";
 
-const CardButton = ({ text, background, color, onClick }) => {
+const CardButton = ({ text, background, color, onClick, size }) => {
   return (
     <Button
+    size={size}
       p={1}
       sx={{
         color: color,

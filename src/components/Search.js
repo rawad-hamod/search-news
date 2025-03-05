@@ -1,6 +1,5 @@
-import React,{useState} from 'react';
+import React,{useState ,useRef} from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
-import { motion } from "framer-motion";
 import * as Yup from 'yup';
 import {
   TextField,
@@ -23,6 +22,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { format } from 'date-fns';
 import NewsCard from './NewsCard';
+import { EnterAnimation } from '../utiles/constants';
 // Validation schema using Yup
 const validationSchema = Yup.object({
   keyword: Yup.string().required('يرجى كتابة ما تريد البحث عنه'),
@@ -44,6 +44,7 @@ const Search = () => {
   const [status, setStatus]=useState("");
   const [page, setPage] = useState(1);
   const [isLoading,setIsLoading]= useState(false);
+  const newsSectionRef = useRef(null);
   const itemsPerPage = 9;
   const startIndex = (page - 1) * itemsPerPage;
   const paginatedNews = results.slice(startIndex, startIndex + itemsPerPage);
@@ -65,7 +66,9 @@ const Search = () => {
         setResults(data.articles); 
         setStatus(data.status)
         setIsLoading(false);
-        console.log(values) 
+        if (newsSectionRef.current) {
+          newsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -77,7 +80,7 @@ const Search = () => {
   return (
     <>
     <Container maxWidth="sm">
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h4" align="center" color="primary" gutterBottom>
         خيارات البحث
       </Typography>
       <Formik
@@ -151,35 +154,32 @@ const Search = () => {
                   variant="contained"
                   color="primary"
                   fullWidth
+                  ref={newsSectionRef}
                 >
                   ابحث 
                 </Button>
               </Grid2>
+              
             </Grid2>
           </Form>
         )}
       </Formik>
+      
       {isLoading && (
        <Box sx={{ display: 'flex' }}>
-       <CircularProgress color="primary"/>
-     </Box>
+              <CircularProgress color="primary" size={45} />
+            </Box>
       )}
-
     </Container>
     {status==="ok" &&
-      <Container m={3}>
-         <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-        
+      <Container >
+         <EnterAnimation>
         <Alert severity="info" >
           {results.length>0 ? `عدد النتائج  ${results.length}`:"لا يوجد نتائج تطابق البحث تأكد من الكلمة المفتاحية وحاول تغيير تاريخ البحث"}
         </Alert>
-        </motion.div>
+        </EnterAnimation>
         
-
+       
       <Grid2
         container
         spacing={2}
@@ -191,7 +191,9 @@ const Search = () => {
         {paginatedNews.map((item, index) => {
           return (
             <Grid2 key={index}  xs={12} md={6} lg={index===0?6:3}>
+              <EnterAnimation>
               <NewsCard data={item} index={index} />
+              </EnterAnimation>
             </Grid2>
           );
         })}
@@ -203,22 +205,25 @@ const Search = () => {
       p={1}
       count={Math.ceil(results.length / itemsPerPage)}
       page={page}
-      onChange={(event, value) => setPage(value)}
+      onChange={(event, value) => {
+        setPage(value);
+        if (newsSectionRef.current) {
+          newsSectionRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+      }}
+
     />}
       
     </Container>}
     {/* Show loading indicator while fetching data */}
     {status==="error"&&
     <Container m={3}>
-      <motion.div
-                initial={{ opacity: 0, y: -50 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.3 }}
-              >
+     <EnterAnimation>
       <Alert severity="error">
 يوجد خطأ في الاتصال بالخادم يرجى المحاولة مرة أخرى
       </Alert>
-      </motion.div>
+      </EnterAnimation>
+      
     </Container>
     }
     </>
