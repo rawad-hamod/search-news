@@ -63,6 +63,7 @@ const Search = () => {
     )
       .then((data) => data.json())
       .then((data) => {
+        
         setResults(data.articles); 
         setStatus(data.status)
         setIsLoading(false);

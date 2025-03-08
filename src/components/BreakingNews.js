@@ -1,32 +1,63 @@
 import React, { useState } from 'react';
-import { Container, Grid, Button, TextField, Stack, Typography, Alert, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { Formik, Form, Field, ErrorMessage } from 'formik';
-import * as Yup from 'yup';
+import { Container, Grid, Button,Box, TextField, Stack, Typography, Alert, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@mui/material';
 import { EnterAnimation } from '../utiles/constants';
 import logo from "../utiles/images/search-news-logo.png";
-
 import { Link } from 'react-router-dom';
-import CardButton from './CardButton';
+import cnn from "../utiles/images/cnn.png";
+import aljazeera from "../utiles/images/aljazeera.png"
+import bbc from "../utiles/images/bbc.png"
+// import CardButton from './CardButton';
 
-const ContactUs = () => {
+const BreakingNews = () => {
   const [submitted, setSubmitted] = useState(false);
+  const [email, setEmail] = useState('');
+  const [categories, setCategories] = useState([]);
+  const [time, setTime] = useState('');
+  const [days, setDays] = useState([]);
+  const [sources, setSources] = useState([]);
 
-  const initialValues = {
-    email: "",
-    question: "",
-    details: "",
+  // Options data
+  const categoriesOptions = ['سياسة', 'فن', 'اقتصاد', 'بورصة', 'رياضة','طقس'];
+  const timeOptions = ['صباحاً', 'ظهراً', 'مساءً'];
+  const daysOptions = ['الأثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];
+  const sourcesOptions = [{source:"BBC News",logo:bbc},{source:"aljazeera",logo:""},{source:"CNN",logo:cnn}];
+  const handleCategoryClick = (category) => {
+    setCategories(prev => 
+      prev.includes(category)
+        ? prev.filter(c => c !== category)
+        : [...prev, category]
+    );
   };
 
-  const validationSchema = Yup.object({
-    question: Yup.string().required("هذا الحقل مطلوب"),
-    email: Yup.string().email("يرجى كتابة البريد الإلكتروني بطريقة صحيحة:example@gmail.com").required("يرجى كتابة البريد الإلكتروني"),
-    details: Yup.string().nullable(),
-  });
-
-  const handleSubmit = (values) => {
-    // Format dates before sending to the API
-    setSubmitted(true);
+  const handleDayClick = (day) => {
+    setDays(prev =>
+      prev.includes(day)
+        ? prev.filter(d => d !== day)
+        : [...prev, day]
+    );
   };
+  const handleSourceClick = (source) => {
+    setSources(prev =>
+      prev.includes(source)
+        ? prev.filter(s => s !== source)
+        : [...prev, source]
+    );
+  };
+  // Handlers
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSubmitted(true)
+    // Handle form submission here
+    console.log({
+      email,
+      categories,
+      time,
+      days,
+      sources
+    });
+   
+  };
+
 
   return (
     <Container maxWidth="lg" sx={{ justifyContent: "center", alignItems: "center" }}>
@@ -60,66 +91,108 @@ const ContactUs = () => {
             </EnterAnimation>
           </Grid>
           <Grid item xs={12} md={7} >
-            <Formik
-              initialValues={initialValues}
-              validationSchema={validationSchema}
-              onSubmit={handleSubmit}
+          <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
+      <Typography variant="h5" gutterBottom>
+        Newsletter Preferences
+      </Typography>
+
+      {/* Email Input */}
+      <TextField
+        fullWidth
+        label="Email"
+        variant="outlined"
+        margin="normal"
+        required
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+
+      {/* Categories Selection */}
+      <FormControl component="fieldset" sx={{ mt: 2, width: '100%' }}>
+        <FormLabel component="legend"> اختر الفئة(متعدد)</FormLabel>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+          {categoriesOptions.map((category) => (
+            <Button
+              key={category}
+              variant={categories.includes(category) ? 'contained' : 'outlined'}
+              onClick={() => handleCategoryClick(category)}
+              sx={{ textTransform: 'none' }}
             >
-              {({ values, setFieldValue }) => (
-                <Form>
-                  <Stack direction="column" spacing={4}>
-                    <Field
-                      as={TextField}
-                      fullWidth
-                      label="اكتب السؤال هنا"
-                      name="question"
-                      variant="outlined"
-                    />
-                    <ErrorMessage name="question" component="div" className="error" />
-                    <FormControl>
-      <FormLabel id="demo-radio-buttons-group-label">Gender</FormLabel>
-      <RadioGroup
-        aria-labelledby="demo-radio-buttons-group-label"
-        defaultValue="female"
-        name="radio-buttons-group"
+              {category}
+            </Button>
+          ))}
+        </Box>
+      </FormControl>
+
+      {/* Time Selection */}
+      <FormControl component="fieldset" sx={{ mt: 3, width: '100%' }}>
+        <FormLabel component="legend">الوقت المفضل لإرسال الأخبار العاجلة:</FormLabel>
+        <RadioGroup
+          row
+          value={time}
+          onChange={(e) => setTime(e.target.value)}
+          sx={{ mt: 1 }}
+        >
+          {timeOptions.map((t) => (
+            <FormControlLabel
+              key={t}
+              value={t}
+              control={<Radio />}
+              label={t}
+            />
+          ))}
+        </RadioGroup>
+      </FormControl>
+
+      {/* Days Selection */}
+      <FormControl component="fieldset" sx={{ mt: 3, width: '100%' }}>
+        <FormLabel component="legend">Days of Week (Multiple)</FormLabel>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+          {daysOptions.map((day) => (
+            <Button
+              key={day}
+              variant={days.includes(day) ? 'contained' : 'outlined'}
+              onClick={() => handleDayClick(day)}
+              sx={{ textTransform: 'none' }}
+            >
+              {day}
+            </Button>
+          ))}
+        </Box>
+      </FormControl>
+
+      {/* Sources Selection */}
+      <FormControl component="fieldset" sx={{ mt: 3, width: '100%' }}>
+        <FormLabel component="legend">Preferred Sources (Multiple)</FormLabel>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
+          {sourcesOptions.map((source) => (
+            <Box
+              key={source}
+              variant={sources.includes(source) ? 'contained' : 'outlined'}
+              onClick={() => handleSourceClick(source.source)}
+              
+            >
+              <img src={source.logo} alt={source.source} style={{backgroundSize:"center", width:"50px",height:"50px"}}/>
+            </Box>
+          ))}
+        </Box>
+      </FormControl>
+
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        fullWidth
+        sx={{ mt: 3 }}
       >
-        <FormControlLabel value="female" control={<CardButton text="عاجل"
-        color="red.main"
-        background="red.light" size="large" />}  />
-        <FormControlLabel value="male" control={<Radio />} label="Male" />
-        <FormControlLabel value="other" control={<Radio />} label="Other" />
-      </RadioGroup>
-    </FormControl>
-                    <Field
-                      as={TextField}
-                      fullWidth
-                      label="اكتب عنوان بريدك الإلكتروني"
-                      name="email"
-                      variant="outlined"
-                    />
-                    <ErrorMessage name="email" component="div" className="error" />
-
-                    <Field
-                      as={TextField}
-                      fullWidth
-                      label="التفاصيل"
-                      name="details"
-                      variant="outlined"
-                    />
-                    <ErrorMessage name="details" component="div" className="error" />
-
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      fullWidth
-                    >
-                  إشترك
-                    </Button>
-                  </Stack>
-                </Form>
-              )}
-            </Formik>
+        Subscribe
+      </Button>
+    </Box>
+       
+                   
+                  
+             
           </Grid>
           
         </Grid>
@@ -128,4 +201,14 @@ const ContactUs = () => {
   );
 };
 
-export default ContactUs;
+export default BreakingNews;
+
+
+
+
+
+  
+
+
+  
+  

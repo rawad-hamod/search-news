@@ -79,6 +79,17 @@ export const themeColors = {
         },
       },
     },
+    MuiToggleButton:{
+      stuleOverrides:{
+        root:{
+          borderRadius: "3rem",
+          transition: "0.5s",
+          padding: "0.5rem",
+          fontSize:"0.8rem",
+          color:"red"
+        }
+      }
+    }
    
   },
 };
